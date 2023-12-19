@@ -4,19 +4,23 @@ const PORT = 9999;
 
 const app = express();
 
+const searchFormTemplate = `
+    <form action="/artist-details" method="POST">
+        <h2>Pesquisar Artista</h2>
+    
+        <label for="artist">🔍</label>
+        <input id="artist" name="artist" type="text" />
+
+        <input type="submit" value="Pesquisar" />
+    </form>    
+    <hr />
+`;
+
 app.use(express.urlencoded());
 app.use(express.static("/"));
 
 app.get("/", (req, res) => {
-    res.send(`
-        <h1>Hello</h1>
-        <form action="/artist-details" method="POST">
-            <label for="artist">Artist</label>
-            <input id="artist" name="artist" type="text" />
-
-            <input type="submit" value="submit" />
-        <form>    
-    `);
+    res.send(searchFormTemplate);
 });
 
 app.post("/artist-search", async (req, res) => {
@@ -44,18 +48,13 @@ app.post("/artist-details", async (req, res) => {
 
     if (contentType === "application/json") {
         const { artist: data } = await artistDetailResponse.json();
-        console.log(data);
-        res.send(`
-            <form action="/artist-details" method="POST">
-                <label for="artist">Artista</label>
-                <input id="artist" name="artist" type="text" />
 
-                <input type="submit" value="procurar" />
-            <form>    
+        res.send(`
+            ${searchFormTemplate}  
 
             <h1>${data.desc}</h1>
 
-            <img width="300" src="https://www.vagalume.com.br${data.pic_medium}" />
+            <img width="300" height="300" src="https://www.vagalume.com.br${data.pic_medium}" />
 
             <div><h3>Rank #${data.rank.pos}<h3></div>
 
